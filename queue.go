@@ -1,11 +1,14 @@
 package queue
 
+const DEFAULT_TRESHOLD = 10
+
 type SQueue[T any] struct {
-	queue      []T
-	size       int
-	length     int
-	startIdx   int
-	expandable bool
+	queue       []T
+	size        int
+	length      int
+	startIdx    int
+	expandable  bool
+	defaultSize int
 }
 
 type Queue[T any] interface {
@@ -29,6 +32,11 @@ func NewQueue[T any](size int, expandable bool) Queue[T] {
 	queue.length = 0
 	queue.startIdx = 0
 	queue.expandable = expandable
+	queue.defaultSize = DEFAULT_TRESHOLD
+
+	if size > DEFAULT_TRESHOLD {
+		queue.defaultSize = size
+	}
 
 	return queue
 }
@@ -58,6 +66,9 @@ func (this *SQueue[T]) GetSize() int {
 }
 
 func (this *SQueue[T]) PushLeft(item T) bool {
+	if this.expandable {
+		this.extend(1)
+	}
 	if this.length < this.size {
 		newIdx := this.size - 1
 		if this.startIdx > 0 {
@@ -66,9 +77,6 @@ func (this *SQueue[T]) PushLeft(item T) bool {
 		this.queue[newIdx] = item
 		this.startIdx = newIdx
 		this.length += 1
-		if this.expandable {
-			this.extend()
-		}
 		return true
 	} else {
 		return false
@@ -76,13 +84,13 @@ func (this *SQueue[T]) PushLeft(item T) bool {
 }
 
 func (this *SQueue[T]) PushRight(item T) bool {
+	if this.expandable {
+		this.extend(1)
+	}
 	if this.length < this.size {
 		newIdx := this.getNewItemIdx()
 		this.queue[newIdx] = item
 		this.length += 1
-		if this.expandable {
-			this.extend()
-		}
 		return true
 	} else {
 		return false
@@ -153,7 +161,7 @@ func (this *SQueue[T]) getLastItemIdx() int {
 	}
 }
 
-func (this *SQueue[T]) extend() {
+/* func (this *SQueue[T]) extend(newSize int) {
 	if this.length == this.size {
 		newQueue := make([]T, this.size*2)
 		if this.startIdx != 0 {
@@ -164,4 +172,31 @@ func (this *SQueue[T]) extend() {
 		this.queue = newQueue
 		this.size *= 2
 	}
+} */
+
+func (this *SQueue[T]) extend(num int) {
+	newSize := this.size + num
+	newLen := this.length + num
+	doubleSize := this.size * 2
+
+	if newLen <= this.size {
+		return
+	}
+
+	if newSize < doubleSize {
+		if this.length < this.defaultSize {
+			newSize = this.defaultSize * 2
+		} else {
+			newSize = newSize + int(this.defaultSize/4)
+		}
+	}
+
+	newQueue := make([]T, newSize)
+	if this.startIdx != 0 {
+		tmpQueue := append(this.queue[this.startIdx:], this.queue[0:this.startIdx]...)
+		newQueue = append(tmpQueue, make([]T, this.size)...)
+		this.startIdx = 0
+	}
+	this.queue = newQueue
+	this.size = newSize
 }

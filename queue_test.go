@@ -80,3 +80,21 @@ func TestQueueShouldBeFilledFromArray(t *testing.T) {
 		t.Errorf("Queue should has length of source array. Queue length is %d", queue.GetLength())
 	}
 }
+
+func TestQueueShouldBeExtended(t *testing.T) {
+	queue := NewQueue[string](10, true)
+
+	amount := 11
+
+	for i := 0; i < amount; i++ {
+		queue.PushRight(fmt.Sprintf("string-%d", i))
+	}
+
+	if queue.IsEmpty() {
+		t.Errorf("Queue should contain elements. Queue length is %d", queue.GetLength())
+	}
+
+	if queue.GetSize() != 13 {
+		t.Errorf("Queue should has size of 3/4 of original size. Queue length is %d", queue.GetLength())
+	}
+}
