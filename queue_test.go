@@ -115,4 +115,10 @@ func TestQueueShouldBeExtendedToQuaterSize(t *testing.T) {
 	if queue.GetSize() != 2500 {
 		t.Errorf("Queue should has size double of it size before extend. Queue size is %d", queue.GetSize())
 	}
+
+	queue.PushRight("string-infinity")
+
+	if queue.GetSize() != 2500 {
+		t.Errorf("Queue size should not be changed. Queue size is %d", queue.GetSize())
+	}
 }
