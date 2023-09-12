@@ -66,5 +66,17 @@ func TestQueueShouldBeEmptyAfterClean(t *testing.T) {
 	if !queue.IsEmpty() {
 		t.Errorf("Queue should be empty. Queue length is %d", queue.GetLength())
 	}
+}
 
+func TestQueueShouldBeFilledFromArray(t *testing.T) {
+	arr := []string{"string-1", "string-2", "string-3"}
+	queue := FromArray[string](arr, false)
+
+	if queue.IsEmpty() {
+		t.Errorf("Queue should contain elements. Queue length is %d", queue.GetLength())
+	}
+
+	if queue.GetLength() != len(arr) {
+		t.Errorf("Queue should has length of source array. Queue length is %d", queue.GetLength())
+	}
 }
