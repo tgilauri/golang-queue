@@ -81,10 +81,10 @@ func TestQueueShouldBeFilledFromArray(t *testing.T) {
 	}
 }
 
-func TestQueueShouldBeExtended(t *testing.T) {
-	queue := NewQueue[string](10, true)
+func TestQueueShouldBeExtendedToDoubleSize(t *testing.T) {
+	queue := NewQueue[string](100, true)
 
-	amount := 11
+	amount := 101
 
 	for i := 0; i < amount; i++ {
 		queue.PushRight(fmt.Sprintf("string-%d", i))
@@ -94,7 +94,25 @@ func TestQueueShouldBeExtended(t *testing.T) {
 		t.Errorf("Queue should contain elements. Queue length is %d", queue.GetLength())
 	}
 
-	if queue.GetSize() != 13 {
-		t.Errorf("Queue should has size of 3/4 of original size. Queue length is %d", queue.GetLength())
+	if queue.GetSize() != 200 {
+		t.Errorf("Queue should has size double of it size before extend. Queue size is %d", queue.GetSize())
+	}
+}
+
+func TestQueueShouldBeExtendedToQuaterSize(t *testing.T) {
+	queue := NewQueue[string](2000, true)
+
+	amount := 2001
+
+	for i := 0; i < amount; i++ {
+		queue.PushRight(fmt.Sprintf("string-%d", i))
+	}
+
+	if queue.IsEmpty() {
+		t.Errorf("Queue should contain elements. Queue length is %d", queue.GetLength())
+	}
+
+	if queue.GetSize() != 2500 {
+		t.Errorf("Queue should has size double of it size before extend. Queue size is %d", queue.GetSize())
 	}
 }

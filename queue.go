@@ -1,6 +1,6 @@
 package queue
 
-const DEFAULT_TRESHOLD = 10
+const DEFAULT_TRESHOLD = 1024
 
 type SQueue[T any] struct {
 	queue       []T
@@ -185,9 +185,9 @@ func (this *SQueue[T]) extend(num int) {
 
 	if newSize < doubleSize {
 		if this.length < this.defaultSize {
-			newSize = this.defaultSize * 2
+			newSize = doubleSize
 		} else {
-			newSize = newSize + int(this.defaultSize/4)
+			newSize = this.size + int(this.defaultSize/4)
 		}
 	}
 
